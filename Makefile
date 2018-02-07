@@ -410,13 +410,12 @@ done-host/s3fs-install:
 	#
 	# $@:
 	#
-	sudo apt-get -y install fuse-utils libfuse-dev libcurl4-openssl-dev libxml2-dev mime-support build-essential
-	wget https://github.com/s3fs-fuse/s3fs-fuse/archive/v1.74.tar.gz
-	tar -zxvf s3fs-1.73.tar.gz
-	setup/bin/findreplace 68719476735LL 687194767350LL s3fs-1.73/src/fdcache.cpp
-	cp s3fs-1.73/src/s3fs.cpp s3fs-1.73/src/s3fs.cpp.old
-	patch -p 0 s3fs-1.73/src/s3fs.cpp < setup/s3fs.cpp.patch
-	cd s3fs-* && ./configure && make && sudo make install
+	git clone https://github.com/s3fs-fuse/s3fs-fuse.git
+	cd s3fs-fuse
+	./autogen.sh
+	./configure
+	make
+	sudo make install
 	touch $@
 
 setup: s3fs done-host/gms-home done-host/user-home-$(USER) stage-software
