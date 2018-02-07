@@ -411,7 +411,7 @@ done-host/s3fs-install:
 	# $@:
 	#
 	sudo apt-get -y install fuse-utils libfuse-dev libcurl4-openssl-dev libxml2-dev mime-support build-essential
-	wget https://s3fs.googlecode.com/files/s3fs-1.73.tar.gz
+	wget https://github.com/s3fs-fuse/s3fs-fuse/archive/v1.74.tar.gz
 	tar -zxvf s3fs-1.73.tar.gz
 	setup/bin/findreplace 68719476735LL 687194767350LL s3fs-1.73/src/fdcache.cpp
 	cp s3fs-1.73/src/s3fs.cpp s3fs-1.73/src/s3fs.cpp.old
