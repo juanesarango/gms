@@ -5,7 +5,7 @@
 # the identity of each GMS install is unique
 RUBY:=$(shell bash -c '(which ruby) || (echo installing ruby ... && sudo apt-get -y -f install ruby1.9.1 >/dev/null 2>&1)')
 GMS_ID:=$(shell cat /etc/genome/sysid 2>/dev/null)
-ifeq ('$(GMS_ID)','') 
+ifeq ('$(GMS_ID)','')
 	GMS_ID:=$(shell ruby -e 'n=Time.now.to_i-1373561229; a=""; while(n > 0) do r = n % 36; a = a +  (r<=9 ? r.to_s : (55+r).chr); n=(n/36).to_i end; print a,sprintf("%02d",(rand()*100).to_i),"\n"')
 endif
 GMS_USER:=genome
@@ -23,7 +23,7 @@ MANIFEST:='standalone.pp'
 # this identifier is used to pick OS-specific targets
 LSB_RELEASE:=$(shell which lsb_release)
 ifeq ("$(LSB_RELEASE)","")
-  OS_VENDOR:=$(shell uname) 
+  OS_VENDOR:=$(shell uname)
   OS_RELASE:=
 else
   OS_VENDOR:=$(shell lsb_release -i 2>/dev/null | awk '{ print $$3 }')
@@ -70,11 +70,11 @@ GIT_VERSION_WORKFLOW:=gms-pub
 GIT_VERSION_RAILS:=gms-pub
 GIT_VERSION_OPENLAVA:=2.2
 
-              
+
 ##### Primary Targets
 
 # in a non-VM environment the default target "all" will build the entire system
-all: 
+all:
 	#
 	# $@:
 	# Install the GMS on the local Ubuntu 12.04 (Precise) host...
@@ -141,13 +141,13 @@ done-host/vminstall-Ubuntu10.04:
 	sudo -v
 	cd setup/archive-files; [ -e $(VIRTUALBOX_UBUNTU_LUCID_DEB) ] || wget http://download.virtualbox.org/virtualbox/$(VIRTUALBOX_VERSION))/$(VIRTUALBOX_UBUNTU_LUCID_DEB)
 	sudo dpkg -i setup/archive-files/$(VIRTUALBOX_UBUNTU_LUCID_DEB) || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
-	sudo apt-get -y install gcc linux-headers-3.0.0-16-server 
+	sudo apt-get -y install gcc linux-headers-3.0.0-16-server
 	sudo /etc/init.d/virtualbox start|| sudo /etc/init.d/vboxdrv setup
 	cd setup/archive-files; [ -e $(VAGRANT_DEB) ] || wget https://dl.bintray.com/mitchellh/vagrant/$(VAGRANT_DEB)
 	sudo dpkg -i setup/archive-files/$(VAGRANT_DEB)
 	vagrant plugin install vagrant-vbguest
 	touch $@
-	
+
 VIRTUALBOX_UBUNTU_PRECISE_DEB=virtualbox-4.3_4.3.8-92456~Ubuntu~precise_amd64.deb
 done-host/vminstall-Ubuntu12.04:
 	#
@@ -156,7 +156,7 @@ done-host/vminstall-Ubuntu12.04:
 	sudo -v
 	cd setup/archive-files; [ -e $(VIRTUALBOX_UBUNTU_PRECISE_DEB) ] || wget http://download.virtualbox.org/virtualbox/$(VIRTUALBOX_VERSION)/$(VIRTUALBOX_UBUNTU_PRECISE_DEB)
 	sudo dpkg -i setup/archive-files/$(VIRTUALBOX_UBUNTU_PRECISE_DEB) || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
-	sudo apt-get -y install gcc linux-headers-generic || (echo "UPDATE THE MAKEFILE FOR UBUNTU PRECISE HEADERS" && false) 
+	sudo apt-get -y install gcc linux-headers-generic || (echo "UPDATE THE MAKEFILE FOR UBUNTU PRECISE HEADERS" && false)
 	sudo /etc/init.d/virtualbox start|| sudo /etc/init.d/vboxdrv setup
 	cd setup/archive-files; [ -e $(VAGRANT_DEB) ] || wget https://dl.bintray.com/mitchellh/vagrant/$(VAGRANT_DEB)
 	sudo dpkg -i setup/archive-files/$(VAGRANT_DEB)
@@ -177,7 +177,7 @@ done-host/vminstall-Darwin:
 	vagrant plugin install vagrant-vbguest
 	touch $@
 
-done-host/vminstall:  
+done-host/vminstall:
 	#
 	# $@: (recurses into vminstall-$(OS)
 	#
@@ -215,11 +215,11 @@ vmcreate: done-host/vmaddbox done-host/vmkernel
 	# $@: (recurses into done-host/apt-get-update on the VM)
 	#
 	#
-	# the first bootup will fail because the NFS client is not installed 
+	# the first bootup will fail because the NFS client is not installed
 	#
 	sudo -v
 	[ ! -e .vagrant ] || sudo chown -R `whoami`: .vagrant
-	vagrant up || true 
+	vagrant up || true
 	sudo chown -R `whoami`: .vagrant
 	#
 	# fix the above issue by adding NSF to the client
@@ -230,7 +230,7 @@ vmcreate: done-host/vmaddbox done-host/vmkernel
 	# now reload the VM
 	# there should be no NFS errors
 	#
-	vagrant reload  
+	vagrant reload
 
 vmup: vmcreate
 	sudo -v
@@ -256,11 +256,11 @@ vminit: vmup
 done-host/vminit:
 	#
 	# $@:
-	# These steps occur early on the VM before it is reloaded. 
+	# These steps occur early on the VM before it is reloaded.
 	#
 	sudo -v
 	make done-host/user-home-$(USER)
-	make done-host/puppet 
+	make done-host/puppet
 	make done-host/sysid
 	touch $@
 
@@ -269,7 +269,7 @@ done-host/vminit:
 # downloading and unzipping are all done with generic targets
 # ...except one that requires special rename handling
 
-done-repo/download-%: 
+done-repo/download-%:
 	#
 	# $@:
 	#
@@ -277,14 +277,14 @@ done-repo/download-%:
 	cd setup/archive-files; $(FTP) $(DATASERVER)/`basename $@ | sed s/download-//` $(DOWNLOAD_TARGET)
 	touch $@
 
-done-host/unzip-sw-%: done-repo/download-% 
+done-host/unzip-sw-%: done-repo/download-%
 	#
 	# $@:
 	#
 	sudo -v
 	sudo chmod -R +w $(GMS_HOME)/sw
 	sudo tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C $(GMS_HOME)/sw
-	touch $@ 
+	touch $@
 
 done-host/unzip-fs-%: done-repo/download-%
 	#
@@ -292,8 +292,8 @@ done-host/unzip-fs-%: done-repo/download-%
 	#
 	sudo -v
 	sudo chmod -R o+w $(GMS_HOME)/fs
-	tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C $(GMS_HOME)/fs 
-	touch $@ 
+	tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C $(GMS_HOME)/fs
+	touch $@
 
 done-host/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz: done-repo/download-apps-$(APPS_DUMP_VERSION).tgz
 	#
@@ -305,23 +305,23 @@ done-host/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz: done-repo/download-apps-$(APPS
 	sudo tar -zxvf setup/archive-files/apps-$(APPS_DUMP_VERSION).tgz -C $(GMS_HOME)/sw
 	[ -e $(GMS_HOME)/sw/apps ] || mkdir -p $(GMS_HOME)/sw/apps
 	cd $(GMS_HOME)/sw/apps && ln -s ../../sw/apps-$(APPS_DUMP_VERSION)/* . || true
-	[ -e $(GMS_HOME)/sw/apps ] 
-	touch $@ 
+	[ -e $(GMS_HOME)/sw/apps ]
+	touch $@
 
 
-##### These steps only run on the actual GMS host 
+##### These steps only run on the actual GMS host
 
-done-host/user-home-%: 
+done-host/user-home-%:
 	#
-	# $@: 
+	# $@:
 	# copying configuration into the current user's home directory
 	# re-run "make home" for any new user...
 	#
 	# [ `basename $(USER_HOME)` = `basename $@ | sed s/user-home-//` ]
 	cp $(PWD)/setup/home/.??* ~$(USER)
 	touch $@
-	
-done-host/sysid: 
+
+done-host/sysid:
 	#
 	# $@:
 	#
@@ -334,7 +334,7 @@ done-host/sysid:
 	[ -z /etc/genome/sysid ] || sudo bash -c 'echo '$(GMS_ID)' > /etc/genome/sysid'
 	# expected sysid is $(GMS_ID)
 	cat /etc/genome/sysid
-	test "`cat /etc/genome/sysid`" = '$(GMS_ID)' 
+	test "`cat /etc/genome/sysid`" = '$(GMS_ID)'
 	touch $@
 
 done-host/hosts:
@@ -343,7 +343,7 @@ done-host/hosts:
 	#
 	sudo -v
 	echo "$(IP) GMS_HOST" | setup/bin/findreplace-gms | sudo bash -c 'cat - >>/etc/hosts'
-	touch $@ 
+	touch $@
 
 done-host/puppet: done-host/sysid done-host/hosts
 	#
@@ -364,7 +364,7 @@ done-host/gms-home-raw:
 	#
 	# $@
 	# When not using a VM, create a real /opt/gms
-	#	
+	#
 	[ -d "/opt/gms" ] || sudo mkdir -p "/opt/gms"
 	sudo chown $(GMS_USER):$(GMS_GROUP) /opt/gms /opt/gms/.*
 	sudo chmod g+rwxs /opt/gms /opt/gms/.*
@@ -410,12 +410,16 @@ done-host/s3fs-install:
 	#
 	# $@:
 	#
+	cd $(HOME)
+	sudo apt-get install -y automake autotools-dev fuse g++ git libcurl4-gnutls-dev libfuse-dev libssl-dev libxml2-dev make pkg-config
 	git clone https://github.com/s3fs-fuse/s3fs-fuse.git
-	cd s3fs-fuse
+	cd $(HOME)/s3fs-fuse
 	./autogen.sh
 	./configure
 	make
 	sudo make install
+	cd $(HOME)
+	rm -rf s3fs-fuse
 	touch $@
 
 setup: s3fs done-host/gms-home done-host/user-home-$(USER) stage-software
@@ -426,11 +430,11 @@ setup: s3fs done-host/gms-home done-host/user-home-$(USER) stage-software
 	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install done-host/exim-config'
 	touch $@
 
-done-host/etc: done-host/puppet done-host/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz 
+done-host/etc: done-host/puppet done-host/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz
 	#
 	# $@:
 	# copy all data from setup/etc into /etc and configure apt sources
-	# 
+	#
 	sudo -v
 	[ -d /etc/facter/facts.d ] || sudo mkdir -p /etc/facter/facts.d
 	# Make a backup of the apt sources file in /etc
@@ -452,11 +456,11 @@ done-host/etc: done-host/puppet done-host/unzip-sw-apt-mirror-min-ubuntu-12.04-$
 	[ ! -e /etc/dpkg/dpkg.cfg.d/multiarch ] || sudo mv /etc/dpkg/dpkg.cfg.d/multiarch /etc/dpkg/dpkg.cfg.d/multiarch.backup
 	sudo apt-get -y -f install
 	# Set some file permissions
-	sudo bash -c 'echo "/opt/gms/$(GMS_ID) *(ro,anonuid=2001,anongid=2001)" >> /etc/exports'	
+	sudo bash -c 'echo "/opt/gms/$(GMS_ID) *(ro,anonuid=2001,anongid=2001)" >> /etc/exports'
 	sudo chmod +x /etc/facter/facts.d/genome.sh
 	touch $@
 
-done-host/apt-get-update: done-host/etc 
+done-host/apt-get-update: done-host/etc
 	#
 	# $@
 	#
@@ -469,7 +473,7 @@ done-host/pkgs: done-host/apt-get-update
 	# $@:
 	#
 	sudo -v
-	# install primary dependency packages 
+	# install primary dependency packages
 	sudo apt-get install -q -y --force-yes git-core vim byobu nfs-common perl-doc genome-snapshot-deps `cat setup/packages.lst`
 	# install rails dependency packages
 	sudo apt-get install -q -y --force-yes git ruby1.9.1 ruby1.9.1-dev rubygems1.9.1 irb1.9.1 ri1.9.1 rdoc1.9.1 build-essential apache2 libopenssl-ruby1.9.1 libssl-dev zlib1g-dev libcurl4-openssl-dev apache2-prefork-dev libapr1-dev libaprutil1-dev postgresql postgresql-contrib libpq-dev libxslt-dev libxml2-dev genome-rails-prod
@@ -488,16 +492,16 @@ done-host/git-checkouts:
 	#
 	sudo -v
 	which git || (which apt-get && sudo apt-get install git) || (echo "*** please install git on your system to continue ***" && false)
-	[ -e $(GMS_HOME)/sw/ur/.git ] 		|| (sudo git clone http://github.com/genome/UR.git $(GMS_HOME)/sw/ur && cd $(GMS_HOME)/sw/ur && sudo git checkout $(GIT_VERSION_UR)) 
+	[ -e $(GMS_HOME)/sw/ur/.git ] 		|| (sudo git clone http://github.com/genome/UR.git $(GMS_HOME)/sw/ur && cd $(GMS_HOME)/sw/ur && sudo git checkout $(GIT_VERSION_UR))
 	cd $(GMS_HOME)/sw/ur/ && git ls-remote --exit-code . $(GIT_VERSION_UR) 1>/dev/null || (echo "failed to clone ur repo" && false)
-	[ -e $(GMS_HOME)/sw/workflow/.git ] || sudo git clone http://github.com/genome/tgi-workflow.git $(GMS_HOME)/sw/workflow && cd $(GMS_HOME)/sw/workflow && sudo git checkout $(GIT_VERSION_WORKFLOW) 
+	[ -e $(GMS_HOME)/sw/workflow/.git ] || sudo git clone http://github.com/genome/tgi-workflow.git $(GMS_HOME)/sw/workflow && cd $(GMS_HOME)/sw/workflow && sudo git checkout $(GIT_VERSION_WORKFLOW)
 	cd $(GMS_HOME)/sw/workflow/ && git ls-remote --exit-code . $(GIT_VERSION_WORKFLOW) 1>/dev/null || (echo "failed to clone workflow repo" && false)
-	[ -e $(GMS_HOME)/sw/rails/.git ] 	|| sudo git clone http://github.com/genome/gms-webviews.git $(GMS_HOME)/sw/rails && cd $(GMS_HOME)/sw/rails && sudo git checkout $(GIT_VERSION_RAILS) 
-	cd $(GMS_HOME)/sw/rails/ && git ls-remote --exit-code . $(GIT_VERSION_RAILS) 1>/dev/null || (echo "failed to clone gms-webviews repo" && false)	
-	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| sudo git clone http://github.com/genome/gms-core.git $(GMS_HOME)/sw/genome && cd $(GMS_HOME)/sw/genome && sudo git checkout $(GIT_VERSION_GENOME)	
-	cd $(GMS_HOME)/sw/genome/ && git ls-remote --exit-code . $(GIT_VERSION_GENOME) 1>/dev/null || (echo "failed to clone gms-core repo" && false)	
+	[ -e $(GMS_HOME)/sw/rails/.git ] 	|| sudo git clone http://github.com/genome/gms-webviews.git $(GMS_HOME)/sw/rails && cd $(GMS_HOME)/sw/rails && sudo git checkout $(GIT_VERSION_RAILS)
+	cd $(GMS_HOME)/sw/rails/ && git ls-remote --exit-code . $(GIT_VERSION_RAILS) 1>/dev/null || (echo "failed to clone gms-webviews repo" && false)
+	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| sudo git clone http://github.com/genome/gms-core.git $(GMS_HOME)/sw/genome && cd $(GMS_HOME)/sw/genome && sudo git checkout $(GIT_VERSION_GENOME)
+	cd $(GMS_HOME)/sw/genome/ && git ls-remote --exit-code . $(GIT_VERSION_GENOME) 1>/dev/null || (echo "failed to clone gms-core repo" && false)
 	[ -e $(GMS_HOME)/sw/openlava/.git ] || sudo git clone http://github.com/openlava/openlava.git $(GMS_HOME)/sw/openlava && cd $(GMS_HOME)/sw/openlava && sudo git checkout $(GIT_VERSION_OPENLAVA)
-	cd $(GMS_HOME)/sw/openlava/ && git ls-remote --exit-code . $(GIT_VERSION_OPENLAVA) 1>/dev/null || (echo "failed to clone openlava repo" && false)	
+	cd $(GMS_HOME)/sw/openlava/ && git ls-remote --exit-code . $(GIT_VERSION_OPENLAVA) 1>/dev/null || (echo "failed to clone openlava repo" && false)
 	sudo chown -R $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)/sw
 	sudo chmod -R g+rwxs $(GMS_HOME)/sw
 	touch $@
@@ -507,7 +511,7 @@ done-host/openlava-compile: done-host/git-checkouts done-host/hosts done-host/et
 	# $@:
 	#
 	sudo -v
-	cd $(GMS_HOME)/sw/openlava && ./bootstrap.sh && make && make check && sudo make install 
+	cd $(GMS_HOME)/sw/openlava && ./bootstrap.sh && make && make check && sudo make install
 	touch $@
 
 done-host/openlava-install: done-host/openlava-compile
@@ -529,15 +533,15 @@ done-host/openlava-install: done-host/openlava-compile
 	sudo /etc/init.d/openlava status
 	touch $@
 
-done-host/db-init: done-host/pkgs 
+done-host/db-init: done-host/pkgs
 	#
 	# $@:
-	# 
+	#
 	# setup the database and user "genome"
 	sudo -v
 	sudo /etc/init.d/postgresql restart
-	sudo -u postgres /usr/bin/createuser -A -D -R -E genome || echo 
-	sudo -u postgres /usr/bin/createdb -T template0 -O genome genome || echo 
+	sudo -u postgres /usr/bin/createuser -A -D -R -E genome || echo
+	sudo -u postgres /usr/bin/createdb -T template0 -O genome genome || echo
 	sudo -u postgres /usr/bin/psql postgres -tAc "ALTER USER \"genome\" WITH PASSWORD 'changeme'"
 	sudo -u postgres /usr/bin/psql -c "GRANT ALL PRIVILEGES ON database genome TO \"genome\";"
 	# configure how posgres takes connections
@@ -553,7 +557,7 @@ done-host/db-init: done-host/pkgs
 done-host/rails: done-host/pkgs
 	#
 	# $@:
-	# 
+	#
 	sudo -v
 	sudo gem install bundler --no-ri --no-rdoc --install-dir=/var/lib/gems/1.9.1
 	sudo chown www-data:www-data /var/www
@@ -567,10 +571,10 @@ done-host/rails: done-host/pkgs
 	sudo -u www-data touch /var/www/gms-webviews/tmp/restart.txt
 	touch $@
 
-done-host/apache: done-host/pkgs 
+done-host/apache: done-host/pkgs
 	#
 	# $@:
-	# 
+	#
 	sudo -v
 	echo '<VirtualHost *:80>' >| /tmp/gms-webviews.conf
 	echo '  ServerName localhost' >> /tmp/gms-webviews.conf
@@ -600,10 +604,10 @@ done-host/apache: done-host/pkgs
 	echo '  </Directory>' >> /tmp/gms-webviews.conf
 	echo '  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/json' >> /tmp/gms-webviews.conf
 	echo '  AddOutputFilterByType DEFLATE image/jpeg, image/png, image/gif' >> /tmp/gms-webviews.conf
-	echo '</VirtualHost>' >> /tmp/gms-webviews.conf 
+	echo '</VirtualHost>' >> /tmp/gms-webviews.conf
 	#
 	sudo mv /tmp/gms-webviews.conf /etc/apache2/sites-available/gms-webviews.conf
-	( [ -e /etc/apache2/sites-enabled/000-default ] && sudo rm /etc/apache2/sites-enabled/000-default ) || true 
+	( [ -e /etc/apache2/sites-enabled/000-default ] && sudo rm /etc/apache2/sites-enabled/000-default ) || true
 	[ -e /etc/apache2/sites-enabled/gms-webviews.conf ] || sudo ln -s  /etc/apache2/sites-available/gms-webviews.conf  /etc/apache2/sites-enabled/gms-webviews.conf
 	sudo service apache2 restart
 	sudo update-rc.d apache2 enable 345
@@ -612,14 +616,14 @@ done-host/apache: done-host/pkgs
 done-host/db-schema: done-host/db-init done-host/hosts
 	#
 	# $@:
-	# 
+	#
 	sudo -v
-	sudo -u postgres psql -d genome -f setup/schema.psql	
+	sudo -u postgres psql -d genome -f setup/schema.psql
 	sudo bash -l -c 'source /etc/genome.conf; /usr/bin/perl setup/prime-disk-allocations.pl'
 	sudo bash -l -c 'source /etc/genome.conf; /usr/bin/perl setup/prime-timeline-allocations.pl'
 	sudo bash -l -c 'source /etc/genome.conf; /usr/bin/perl setup/prime-sqlite.pl'
-	sudo bash -l -c 'source /etc/genome.conf; ($(GMS_HOME)/sw/genome/bin/genome-perl $(GMS_HOME)/sw/genome/bin/genome disk volume list | grep reads >/dev/null)' 
-	touch $@ 
+	sudo bash -l -c 'source /etc/genome.conf; ($(GMS_HOME)/sw/genome/bin/genome-perl $(GMS_HOME)/sw/genome/bin/genome disk volume list | grep reads >/dev/null)'
+	touch $@
 
 done-host/custom-r: done-host/pkgs
 	#
@@ -641,7 +645,7 @@ done-host/exim-config: done-host/pkgs
 	sudo update-exim4.conf
 	touch $@
 
-stage-software: done-host/pkgs done-host/git-checkouts done-host/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-host/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz 
+stage-software: done-host/pkgs done-host/git-checkouts done-host/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-host/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz
 
 
 ##### Optional maintenance targets:
@@ -652,16 +656,16 @@ home: done-host/user-home-$(USER)
 	#
 	# add the current user to the correct groups
 	sudo usermod -aG $(GMS_GROUP),sudo,fuse $(USER) || true # wait for groups to be defined
-	
+
 update-repos:
 	#
 	# $@:
 	#
 	sudo -v
-	cd $(GMS_HOME)/sw/genome; git pull origin $(GIT_VERSION_GENOME) 
+	cd $(GMS_HOME)/sw/genome; git pull origin $(GIT_VERSION_GENOME)
 	cd $(GMS_HOME)/sw/ur; git pull origin $(GIT_VERSION_UR)
 	cd $(GMS_HOME)/sw/workflow; git pull origin $(GIT_VERSION_WORKFLOW)
-	cd $(GMS_HOME)/sw/rails; git pull origin $(GIT_VERSION_RAILS) 
+	cd $(GMS_HOME)/sw/rails; git pull origin $(GIT_VERSION_RAILS)
 	[ -d /var/www/gms-webviews ] || sudo mkdir /var/www/gms-webviews
 	sudo chown -R www-data:www-data /var/www/gms-webviews/
 	sudo -u www-data rsync -r $(GMS_HOME)/sw/rails/ /var/www/gms-webviews
@@ -686,7 +690,7 @@ db-rebuild:
 	[ -e drop/db-data ] && rm drop/db-data || echo
 	sudo -u postgres /usr/bin/createdb -T template0 -O genome genome
 	sudo -u postgres /usr/bin/psql -c "GRANT ALL PRIVILEGES ON database genome TO \"genome\";"
-	sudo -u postgres psql -d genome -f setup/schema.psql	
+	sudo -u postgres psql -d genome -f setup/schema.psql
 	setup/prime-disk-allocations.pl
 	setup/prime-timeline-allocations.pl
 	sudo touch done-host/db-schema
