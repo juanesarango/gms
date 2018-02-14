@@ -427,7 +427,8 @@ setup: s3fs done-host/gms-home done-host/user-home-$(USER) stage-software
 	# $@: (recurses into all subsequent steps) after sourcing the /etc/genome.conf file
 	#
 	# nesting make ensures that the users and environment are set up before running things that depend on them
-	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install done-host/exim-config'
+	# sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install done-host/exim-config'
+	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/exim-config'
 	touch $@
 
 done-host/etc: done-host/puppet done-host/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz
@@ -500,8 +501,8 @@ done-host/git-checkouts:
 	cd $(GMS_HOME)/sw/rails/ && git ls-remote --exit-code . $(GIT_VERSION_RAILS) 1>/dev/null || (echo "failed to clone gms-webviews repo" && false)
 	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| sudo git clone http://github.com/genome/genome.git $(GMS_HOME)/sw/genome && cd $(GMS_HOME)/sw/genome && sudo git checkout $(GIT_VERSION_GENOME)
 	cd $(GMS_HOME)/sw/genome/ && git ls-remote --exit-code . $(GIT_VERSION_GENOME) 1>/dev/null || (echo "failed to clone genome repo" && false)
-	[ -e $(GMS_HOME)/sw/openlava/.git ] || sudo git clone http://github.com/openlava/openlava.git $(GMS_HOME)/sw/openlava && cd $(GMS_HOME)/sw/openlava && sudo git checkout $(GIT_VERSION_OPENLAVA)
-	cd $(GMS_HOME)/sw/openlava/ && git ls-remote --exit-code . $(GIT_VERSION_OPENLAVA) 1>/dev/null || (echo "failed to clone openlava repo" && false)
+	# [ -e $(GMS_HOME)/sw/openlava/.git ] || sudo git clone http://github.com/openlava/openlava.git $(GMS_HOME)/sw/openlava && cd $(GMS_HOME)/sw/openlava && sudo git checkout $(GIT_VERSION_OPENLAVA)
+	# cd $(GMS_HOME)/sw/openlava/ && git ls-remote --exit-code . $(GIT_VERSION_OPENLAVA) 1>/dev/null || (echo "failed to clone openlava repo" && false)
 	sudo chown -R $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)/sw
 	sudo chmod -R g+rwxs $(GMS_HOME)/sw
 	touch $@
