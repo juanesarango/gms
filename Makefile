@@ -428,7 +428,7 @@ setup: s3fs done-host/gms-home done-host/user-home-$(USER) stage-software
 	#
 	# nesting make ensures that the users and environment are set up before running things that depend on them
 	# sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install done-host/exim-config'
-	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/exim-config'
+	sudo bash -l -c 'source /etc/genome.conf; make done-host/apache done-host/db-schema done-host/exim-config'
 	touch $@
 
 done-host/etc: done-host/puppet done-host/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz
